@@ -20,6 +20,9 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationConverter jwtConverter) throws Exception {
         http
+            // CORS habilitado: el bean CorsConfigurationSource de CorsConfig
+            // se aplica automáticamente al filter chain.
+            .cors(c -> {})
             // API stateless: el servidor no guarda sesión. El cliente se
             // identificará con un JWT en cada request (M1.3); no hay cookie de sesión.
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
