@@ -80,6 +80,15 @@
 			<artifactId>flyway-database-postgresql</artifactId>
 		</dependency>
 
+		<!-- OpenAPI / Swagger UI. Genera /v3/api-docs y /swagger-ui.html
+		     desde las anotaciones de los controllers. Versión 2.8.x soporta
+		     Spring Boot 3.x; con Boot 4 puede haber friction (verificar al arrancar). -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.8.13</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>

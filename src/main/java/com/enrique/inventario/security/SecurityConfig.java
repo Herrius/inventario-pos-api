@@ -3,7 +3,6 @@ package com.enrique.inventario.security;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import java.util.List;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.GrantedAuthority;
@@ -35,10 +34,12 @@ public class SecurityConfig {
                 // El forward interno a /error (p. ej. en un 404) también pasa por
                 // seguridad; permitirlo evita que un 404 legítimo termine como 403.
                 .requestMatchers("/error").permitAll()
-                // Catálogo: lectura pública (GET). La escritura (POST/PUT/DELETE) no
-                // matchea aquí → cae en authenticated() + @PreAuthorize("hasRole('ADMIN')").
-                .requestMatchers(HttpMethod.GET, "/v1/categories/**", "/v1/products/**").permitAll()
-                // Todo lo demás exige autenticación.
+                // Swagger UI + OpenAPI spec (M1). Útiles para inspeccionar la API
+                // sin login; no exponen datos.
+                .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
+                // Inventario / POS NO es público: los productos son data interna del
+                // negocio. Todo lo demás exige autenticación; ADMIN vs CAJERO se
+                // resuelve por @PreAuthorize en los métodos.
                 .anyRequest().authenticated()
             )
             // Es una API REST: sin login por formulario ni HTTP Basic.

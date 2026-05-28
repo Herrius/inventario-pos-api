@@ -20,9 +20,9 @@ public class UserController {
 
     // Perfil del usuario dueño del token. El "sub" del JWT es su email.
     // @PreAuthorize demuestra la autorización por rol: requiere que la authority
-    // ROLE_CLIENTE/ROLE_ADMIN (mapeada desde el claim "role") esté presente.
+    // ROLE_CAJERO/ROLE_ADMIN (mapeada desde el claim "role") esté presente.
     @GetMapping("/me")
-    @PreAuthorize("hasAnyRole('CLIENTE', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('CAJERO', 'ADMIN')")
     public UserResponse me(@AuthenticationPrincipal Jwt jwt) {
         return userService.getProfile(jwt.getSubject());
     }

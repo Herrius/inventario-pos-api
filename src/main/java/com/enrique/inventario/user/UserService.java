@@ -24,10 +24,12 @@ public class UserService {
         if (userRepository.existsByEmail(request.email())) {
             throw new EmailAlreadyExistsException(request.email());
         }
+        // Por defecto, los usuarios registrados desde la API pública son CAJERO.
+        // Para crear un ADMIN se promueve manualmente en la base (ver DEPLOY.md).
         User user = new User(
                 request.email(),
                 passwordEncoder.encode(request.password()), // guardamos el HASH, nunca el texto plano
-                Role.CLIENTE
+                Role.CAJERO
         );
         User saved = userRepository.save(user);
         return toResponse(saved);
