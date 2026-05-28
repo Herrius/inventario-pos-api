@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: inventario-pos-api
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/inventario}
+    username: ${DB_USERNAME:inventario}
+    password: ${DB_PASSWORD:inventario}
+
+  jpa:
+    # Flyway es el dueño del esquema. Hibernate solo VALIDA que las entidades
+    # cuadren con las tablas; nunca crea ni altera (evita "schema drift").
+    hibernate:
+      ddl-auto: validate
+    # Desactiva Open Session In View (anti-patrón): mantener la sesión de BD
+    # abierta durante el render de la respuesta esconde queries y degrada.
+    open-in-view: false
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        # Solo exponemos lo necesario, no todos los endpoints de Actuator.
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+server:
+  port: 8080

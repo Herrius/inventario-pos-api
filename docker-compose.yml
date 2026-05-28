@@ -1,0 +1,34 @@
+services:
+  db:
+    image: postgres:17
+    container_name: b2-db
+    environment:
+      POSTGRES_DB: ${DB_NAME:-inventario}
+      POSTGRES_USER: ${DB_USERNAME:-inventario}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-inventario}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      # La app no arranca hasta que la BD responda (depends_on: service_healthy).
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-inventario} -d ${DB_NAME:-inventario}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  app:
+    build: .
+    container_name: b2-app
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/${DB_NAME:-inventario}
+      DB_USERNAME: ${DB_USERNAME:-inventario}
+      DB_PASSWORD: ${DB_PASSWORD:-inventario}
+    ports:
+      - "8080:8080"
+
+volumes:
+  pgdata:

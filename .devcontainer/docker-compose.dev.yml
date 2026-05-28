@@ -1,0 +1,15 @@
+# Servicio de desarrollo: aquí editas y corres la app a mano (./mvnw spring-boot:run).
+# Reusa el servicio `db` del compose principal y NO levanta el servicio `app` (prod),
+# gracias a runServices: [dev, db] en devcontainer.json.
+services:
+  dev:
+    image: mcr.microsoft.com/devcontainers/java:1-21-bookworm
+    volumes:
+      - ..:/workspace:cached
+    command: sleep infinity
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/inventario
+      DB_USERNAME: inventario
+      DB_PASSWORD: inventario
+    depends_on:
+      - db

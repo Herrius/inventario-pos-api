@@ -1,0 +1,10 @@
+target/
+.git/
+.gitignore
+.gitattributes
+.idea/
+*.iml
+.devcontainer/
+.env
+HELP.md
+README.md
