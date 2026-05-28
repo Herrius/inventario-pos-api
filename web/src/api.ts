@@ -119,6 +119,33 @@ export interface DailySummary {
   ticketPromedio: number;
 }
 
+export interface Category {
+  id: number;
+  nombre: string;
+  createdAt: string;
+}
+
+export interface ProductCreateRequest {
+  sku: string;
+  nombre: string;
+  precio: number;
+  categoryId: number;
+  minStock: number;
+}
+
+export interface StockEntryRequest {
+  productId: number;
+  cantidad: number;
+  razon?: string;
+}
+
+export interface StockAdjustmentRequest {
+  productId: number;
+  direccion: "POSITIVO" | "NEGATIVO";
+  cantidad: number;
+  razon?: string;
+}
+
 export const api = {
   login: (email: string, password: string) =>
     request<LoginResponse>("POST", "/v1/auth/login", { email, password }),
@@ -134,4 +161,19 @@ export const api = {
     request<SaleResponse>("POST", "/v1/sales", { items }),
   dailySummary: (date: string) =>
     request<DailySummary>("GET", `/v1/reports/sales/daily?date=${date}`),
+
+  // --- ADMIN ---
+  categories: () => request<Category[]>("GET", "/v1/categories"),
+  createCategory: (nombre: string) =>
+    request<Category>("POST", "/v1/categories", { nombre }),
+  createProduct: (req: ProductCreateRequest) =>
+    request<Product>("POST", "/v1/products", req),
+  updateProduct: (id: number, req: ProductCreateRequest) =>
+    request<Product>("PUT", `/v1/products/${id}`, req),
+  deleteProduct: (id: number) =>
+    request<void>("DELETE", `/v1/products/${id}`),
+  registerEntry: (req: StockEntryRequest) =>
+    request<StockMovement>("POST", "/v1/inventory/entries", req),
+  registerAdjustment: (req: StockAdjustmentRequest) =>
+    request<StockMovement>("POST", "/v1/inventory/adjustments", req),
 };

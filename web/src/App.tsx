@@ -7,6 +7,7 @@ import { Products } from "./pages/Products";
 import { Pos } from "./pages/Pos";
 import { Daily } from "./pages/Daily";
 import { Movements } from "./pages/Movements";
+import { Admin } from "./pages/Admin";
 import "./App.css";
 
 function Layout({ children }: { children: React.ReactNode }) {
@@ -27,6 +28,7 @@ function Layout({ children }: { children: React.ReactNode }) {
         <Link to="/pos">POS</Link>
         <Link to="/daily">Resumen del día</Link>
         <Link to="/movements">Movimientos</Link>
+        {me?.role === "ADMIN" && <Link to="/admin">Admin</Link>}
         <span className="spacer" />
         {me && <span className="user">{me.email} · {me.role}</span>}
         <button className="logout" onClick={logout}>Salir</button>
@@ -49,6 +51,7 @@ export default function App() {
         <Route path="/pos"       element={<RequireAuth><Pos       /></RequireAuth>} />
         <Route path="/daily"     element={<RequireAuth><Daily     /></RequireAuth>} />
         <Route path="/movements" element={<RequireAuth><Movements /></RequireAuth>} />
+        <Route path="/admin"     element={<RequireAuth><Admin     /></RequireAuth>} />
       </Routes>
     </BrowserRouter>
   );
