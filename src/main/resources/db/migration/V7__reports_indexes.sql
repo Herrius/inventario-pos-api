@@ -1,0 +1,23 @@
+-- M5: índices adicionales pensados específicamente para los queries de reportes.
+--
+-- Análisis de los queries esperados:
+--
+--   1) sales/daily, sales/range:
+--      SELECT ... FROM sales WHERE status='PAGADA' AND created_at >= ? AND created_at < ?
+--      Filtro fuerte por status + rango temporal. Un índice (status, created_at)
+--      permite a Postgres encontrar PAGADAS dentro del rango en una sola búsqueda.
+--      El idx_sales_created_at solo ayuda al rango, dejando el status como filtro
+--      post-scan.
+--
+--   2) top-products:
+--      JOIN sale_items si ON si.sale_id = sales.id
+--      WHERE sales.status='PAGADA' AND sales.created_at IN rango
+--      GROUP BY producto
+--      El bottleneck es el filtro de sales (1) más el join hacia sale_items.
+--      idx_sale_items_sale (M4) ya cubre el join.
+--
+-- Por qué este índice y no más: agregar índices innecesarios castiga las
+-- escrituras (cada INSERT en sales requiere mantenerlos). Solo creamos el que
+-- gana lecturas reales del reporte.
+
+CREATE INDEX idx_sales_status_time ON sales(status, created_at DESC);
