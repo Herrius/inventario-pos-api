@@ -33,6 +33,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * Unit tests del corazón transaccional. Toda la persistencia mockeada — el test
@@ -58,6 +59,11 @@ class SaleServiceTest {
         cajero = new User("cajero@test.com", "hash", Role.CAJERO);
         bebidas = new Category("Bebidas");
         coca = new Product("COCA-500", "Coca Cola 500ml", new BigDecimal("3.50"), bebidas, 10);
+        // Las entidades nuevas no tienen @Id (lo asigna JPA en persist). En el
+        // mundo de mocks no se persiste, así que seteamos los IDs via reflection
+        // para que las verificaciones puedan asertar el productId correcto.
+        ReflectionTestUtils.setField(coca, "id", 1L);
+        ReflectionTestUtils.setField(bebidas, "id", 1L);
     }
 
     @Test
