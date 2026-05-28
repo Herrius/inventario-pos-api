@@ -6,6 +6,8 @@ import com.enrique.inventario.user.UserNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -64,6 +66,30 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<ApiError> handleConflict(ConflictException ex) {
         return apiError(HttpStatus.CONFLICT, "CONFLICT", ex.getMessage(), null);
+    }
+
+    /**
+     * Violaciones de constraints de la BD (FK restrictiva, UNIQUE, CHECK, NOT NULL).
+     * Por ejemplo: borrar una categoría que tiene productos asociados con
+     * {@code ON DELETE RESTRICT}. Se traduce a 409 con {@code DATA_INTEGRITY_VIOLATION}
+     * y mensaje genérico (no se filtra el detalle de la BD).
+     */
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiError> handleDataIntegrity(DataIntegrityViolationException ex) {
+        return apiError(HttpStatus.CONFLICT, "DATA_INTEGRITY_VIOLATION",
+                "La operación viola una restricción de integridad (recurso referenciado o duplicado).",
+                null);
+    }
+
+    /**
+     * Conflicto de versión por {@code @Version}: dos transacciones modificaron el
+     * mismo recurso. Es la señal de "intentalo de nuevo" en el flujo de ventas (M4).
+     */
+    @ExceptionHandler(OptimisticLockingFailureException.class)
+    public ResponseEntity<ApiError> handleOptimisticLock(OptimisticLockingFailureException ex) {
+        return apiError(HttpStatus.CONFLICT, "OPTIMISTIC_LOCK_FAILURE",
+                "El recurso fue modificado por otra operación. Reintentar la transacción.",
+                null);
     }
 
     // --------- Overrides de ResponseEntityExceptionHandler ---------
