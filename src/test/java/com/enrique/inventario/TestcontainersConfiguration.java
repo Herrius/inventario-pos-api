@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 @TestConfiguration(proxyBeanMethods = false)
-class TestcontainersConfiguration {
+public class TestcontainersConfiguration {
 
     // @ServiceConnection cablea el datasource de Spring a este Postgres efímero:
     // el test corre contra un Postgres REAL (como producción), no contra un H2
