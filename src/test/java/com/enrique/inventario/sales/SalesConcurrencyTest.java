@@ -52,7 +52,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  */
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @Import(TestcontainersConfiguration.class)
-class SalesConcurrencyIT {
+class SalesConcurrencyTest {
 
     private static final int CONCURRENT_REQUESTS = 10;
 
